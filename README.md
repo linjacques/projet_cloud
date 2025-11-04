@@ -112,3 +112,84 @@ Ce dépôt contient :
 
 ---
 
+##  Lancer EC2 en local : 
+
+          1 : pour ce connecter à son instance ec2 : 
+
+ssh -i "clef_instanceec2.pem" ec2-user@ec2-35-181-63-154.eu-west-3.compute.amazonaws.com
+
+          2 : Création du script Bash — Crée un script /home/ec2-user/upload_qdaparis_v2.sh qui télécharge le CSV “Que faire à Paris ?”, le vérifie et l’upload sur S3.
+
+sudo tee /home/ec2-user/upload_qdaparis_v2.sh > /dev/null <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ---------- paramètres ----------
+BUCKET="proj-cloud-brute"
+PREFIX="autre"                                    
+FILENAME="que-faire-a-paris-v2.csv"              
+LOCAL_PATH="/tmp/${FILENAME}"
+S3_PATH="s3://${BUCKET}/${PREFIX}/${FILENAME}"
+CSV_URL="https://opendata.paris.fr/api/explore/v2.1/catalog/datasets/que-faire-a-paris-/exports/csv?lang=fr&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B"
+LOG="/home/ec2-user/upload_qdaparis_v2.log"
+# ---------------------------------
+
+echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - START" | tee -a "$LOG"
+
+curl -fSL --retry 3 --retry-delay 5 --connect-timeout 15 --max-time 300 "$CSV_URL" -o "$LOCAL_PATH"
+
+if [ ! -s "$LOCAL_PATH" ]; then
+  echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - ERROR: fichier téléchargé vide" | tee -a "$LOG"
+  exit 2
+fi
+
+if head -n 1 "$LOCAL_PATH" | grep -qiE '<!DOCTYPE|<html'; then
+  echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - ERROR: contenu reçu = HTML, pas CSV" | tee -a "$LOG"
+  cp "$LOCAL_PATH" "${LOCAL_PATH}.html"   # sauvegarde pour debug
+  exit 2
+fi
+
+HEADLINE=$(head -n 1 "$LOCAL_PATH" || echo "")
+if ! echo "$HEADLINE" | grep -q ';'; then
+  echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - WARNING: l'entête ne contient pas de ';' (vérifier le CSV)" | tee -a "$LOG"
+fi
+
+echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - Fichier téléchargé: ${LOCAL_PATH}" | tee -a "$LOG"
+tail -n 3 "$LOCAL_PATH" | tee -a "$LOG"
+
+/usr/bin/aws s3 cp "$LOCAL_PATH" "$S3_PATH" --only-show-errors
+echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - Upload terminé: ${S3_PATH}" | tee -a "$LOG"
+
+rm -f "$LOCAL_PATH"
+
+echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - FIN" | tee -a "$LOG"
+EOF
+
+
+sudo chmod +x /home/ec2-user/upload_qdaparis_v2.sh
+sudo chown ec2-user:ec2-user /home/ec2-user/upload_qdaparis_v2.sh
+
+sudo touch /home/ec2-user/upload_qdaparis_v2.log
+sudo chown ec2-user:ec2-user /home/ec2-user/upload_qdaparis_v2.log
+sudo chmod 644 /home/ec2-user/upload_qdaparis_v2.log
+
+        3 : Exécution manuelle du script — Lance le script immédiatement et affiche les 50 dernières lignes du log pour vérifier le résultat.
+
+/home/ec2-user/upload_qdaparis_v2.sh || echo "Erreur lors de l'exécution"
+tail -n 50 /home/ec2-user/upload_qdaparis_v2.log
+
+        4 : Création du cron job — Programme le script pour qu’il s’exécute automatiquement le 1er de chaque mois à 1h du matin.
+
+crontab -l 2>/dev/null > /tmp/current_cron || true
+
+(crontab -l 2>/dev/null | grep -v 'upload_qdaparis_v2.sh') | crontab -
+
+( crontab -l 2>/dev/null; echo "0 1 1 * * /home/ec2-user/upload_qdaparis_v2.sh >> /home/ec2-user/upload_qdaparis_v2_cron.log 2>&1" ) | crontab -
+
+crontab -l
+
+        5 : Vérification du service cron — Vérifie que le démon crond (responsable des tâches planifiées) est bien actif.
+
+sudo systemctl status crond --no-pager
+ 
+

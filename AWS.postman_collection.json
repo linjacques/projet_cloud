@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "ded25531-d5ba-4686-aa6f-e7f4b9337735",
+		"name": "AWS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24851922"
+	},
+	"item": [
+		{
+			"name": "getRatp",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "N3cFnWgwcBalizigECa8F4Sr22TAvrOF5QK24WRO",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://d1rk46miy7.execute-api.eu-west-3.amazonaws.com/prod/ratp?status=active",
+					"protocol": "https",
+					"host": [
+						"d1rk46miy7",
+						"execute-api",
+						"eu-west-3",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"prod",
+						"ratp"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "active"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getEvenements",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "N3cFnWgwcBalizigECa8F4Sr22TAvrOF5QK24WRO",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "https://d1rk46miy7.execute-api.eu-west-3.amazonaws.com/prod/evenements",
+					"protocol": "https",
+					"host": [
+						"d1rk46miy7",
+						"execute-api",
+						"eu-west-3",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"prod",
+						"evenements"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getVelibEvenements",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "N3cFnWgwcBalizigECa8F4Sr22TAvrOF5QK24WRO",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://d1rk46miy7.execute-api.eu-west-3.amazonaws.com/prod/velib_evenements",
+					"protocol": "https",
+					"host": [
+						"d1rk46miy7",
+						"execute-api",
+						"eu-west-3",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"prod",
+						"velib_evenements"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getEvenements_Ratp_Velib",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "N3cFnWgwcBalizigECa8F4Sr22TAvrOF5QK24WRO",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://d1rk46miy7.execute-api.eu-west-3.amazonaws.com/prod/evenements_ratp_velib",
+					"protocol": "https",
+					"host": [
+						"d1rk46miy7",
+						"execute-api",
+						"eu-west-3",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"prod",
+						"evenements_ratp_velib"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

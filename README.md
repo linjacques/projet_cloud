@@ -1,7 +1,7 @@
 #  Smart City – Optimisation de la disponibilité des Vélib’ à Paris
 
 **Auteurs :** Jacques LIN & Thomas COUTAREL  
-**Projet :** Cloud AWS – Efrei M1 2024/2025  
+**Projet :** Cloud AWS – Efrei M2 2024/2025  
 
 ---
 
@@ -42,6 +42,9 @@ En combinant plusieurs sources de données ouvertes et temps réel, notre platef
 
 ##  Architecture AWS
 
+<img width="1744" height="672" alt="cityflow_architecture_aws drawio(1)" src="https://github.com/user-attachments/assets/65e00842-da46-42b4-83e6-0e74d796d64b" />
+
+   
 Notre architecture repose sur plusieurs couches logiques :  
 
 ### 1. **Ingestion & Traitement**
@@ -69,12 +72,8 @@ Notre architecture repose sur plusieurs couches logiques :
 
 Ce dépôt contient :
 - Le code des **fonctions AWS Lambda** :
-  - `velib_loader.py`
-  - `datamarts.py`
-  - `fusion_csv.py`
-- Les **scripts d’orchestration** exécutés par **EventBridge** (cron job quotidien).  
-- Les **définitions d’API Gateway** pour exposer les données DynamoDB.  
-- Le **code du dashboard interactif** (optionnel).  
+- La ** collection de Postman ** avec les endpoints (optionnel).
+- 
 
 ---
 
@@ -113,9 +112,3 @@ Ce dépôt contient :
 
 ---
 
-##  Exécution de l'instance EC2 (en local)
-
-
-
-# Exécuter une Lambda localement
-python lambda_functions/velib_loader.py
